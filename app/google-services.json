@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "275890153034",
+    "firebase_url": "https://strongeyetimeregister-default-rtdb.firebaseio.com",
+    "project_id": "strongeyetimeregister",
+    "storage_bucket": "strongeyetimeregister.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:275890153034:android:ea199ffadd340941be28b3",
+        "android_client_info": {
+          "package_name": "com.example.strongeyetimeregister"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "275890153034-8evtcmmn0depopj9vt9l4vfnslq3oba6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.strongeyetimeregister",
+            "certificate_hash": "6d3f8c2591d203888a97a8b437d3cfad7e0d36d2"
+          }
+        },
+        {
+          "client_id": "275890153034-ve8r244gk155cn5e21cccmjt5et58ijq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQo-UvzA4ou_QvydgnbZdKtLlymKpGBp4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "275890153034-ve8r244gk155cn5e21cccmjt5et58ijq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
