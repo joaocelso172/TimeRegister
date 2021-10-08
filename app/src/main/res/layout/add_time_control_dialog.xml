@@ -8,6 +8,7 @@
     android:background="@drawable/curve_shape"
     android:orientation="vertical">
 
+
     <TextView
         android:id="@+id/txt_dia"
         android:layout_width="wrap_content"
@@ -32,9 +33,16 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/txt_init_text"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Início:"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
@@ -54,6 +62,13 @@
                     android:textSize="14sp" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_end_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fim:"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"

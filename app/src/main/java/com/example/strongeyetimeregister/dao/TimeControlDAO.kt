@@ -1,8 +1,8 @@
 package com.example.strongeyetimeregister.dao
 
-import android.util.Log
 import androidx.annotation.NonNull
 import com.example.strongeyetimeregister.model.TimeControl
+import com.example.strongeyetimeregister.model.dto.TimeControlDTO
 import com.example.strongeyetimeregister.recyclerviewutils.TimeControlRecyclerAdapter
 import com.example.strongeyetimeregister.utils.Base64Custom
 import com.example.strongeyetimeregister.utils.FirebaseConfig
@@ -29,6 +29,15 @@ class TimeControlDAO {
             dbUserRegisterRef.child(timeControl.id).setValue(timeControl)
         } else return
     }
+    //TODO create method that convert it to TimeControl model
+    fun addTimeControl(@NonNull timeControl: TimeControlDTO) {
+        val timeControlID: String? = dbUserRegisterRef.push().getKey()
+
+        if (timeControlID != null) {
+            timeControl.id = timeControlID
+            dbUserRegisterRef.child(timeControl.id).setValue(timeControl)
+        } else return
+    }
 
     fun deleteTimeControl() {}
 
@@ -36,6 +45,8 @@ class TimeControlDAO {
 
     fun getAllTimeControl(tmList: ArrayList<TimeControl>, rcAdapter: TimeControlRecyclerAdapter) : ArrayList<TimeControl>{
         timeControlList = ArrayList<TimeControl>()
+
+        timeControlList.clear()
 
         dbUserRegisterRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

@@ -1,5 +1,6 @@
 package com.example.strongeyetimeregister
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.Switch
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.strongeyetimeregister.Constants.LISTENER_OFF
@@ -22,6 +24,7 @@ class TimeControlActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var swtStartCount: Switch
     private lateinit var txtInitialTime: TextView
     private lateinit var txtActualTime: TextView
+    private lateinit var txtDurationTime: TextView
     private lateinit var clockListener: ClockListener
     private lateinit var timeControlList: ArrayList<TimeControl>
 
@@ -35,10 +38,9 @@ class TimeControlActivity : AppCompatActivity(), View.OnClickListener{
 
         txtInitialTime = findViewById(R.id.txt_initial_time)
         txtActualTime = findViewById(R.id.txt_actual_time)
+        txtDurationTime = findViewById(R.id.txt_duration_time)
 
         initRecyclerView()
-
-
     }
 
     private fun initRecyclerView(){
@@ -48,10 +50,11 @@ class TimeControlActivity : AppCompatActivity(), View.OnClickListener{
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onClick(v: View?) {
             when(v!!.id!!){
                 R.id.switch_start_count -> {
-                    if (swtStartCount.isChecked) clockListener.showDateInfo(txtInitialTime, txtActualTime)
+                    if (swtStartCount.isChecked) clockListener.showDateInfo(txtInitialTime, txtActualTime, txtDurationTime)
                     else clockListener.addTimeRegister()
                 }
         }

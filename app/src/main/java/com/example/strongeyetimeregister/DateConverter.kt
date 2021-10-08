@@ -1,38 +1,61 @@
 package com.example.strongeyetimeregister
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class DateConverter {
-    companion object{
-    var ISO_8601_FORMAT: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:sss'Z'")
+    companion object {
 
-        fun convertToISO(date: Date) : String {
+        var ISO_8601_FORMAT: SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:sss'Z'")
+
+        var locale: Locale = Locale("pt", "br")
+
+        fun convertToISO(date: Date): String {
             return ISO_8601_FORMAT.format(date)
         }
 
-        fun convertToTime(date: String) : String{
+        /*fun convertToTime(date: String) : String{
             return toHoursFormat(date)
         }
 
         fun convertToTime(date: Date) : String{
             return toHoursFormat(convertToISO(date))
+        }*/
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun localDateTimeToHours(date: LocalDateTime): String {
+            return date.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
         }
 
-        fun convertToCompleteDate(date: String){}
 
-        fun toHoursFormat(string: String) : String{
-            val dateTime = string.split("T").toTypedArray()
-            val hours = dateTime[1].split(":").toTypedArray()
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun localDateTimeToHours(date: String): LocalDateTime {
+            var formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            var dateTime: LocalDateTime = LocalDateTime.parse(date, formatter);
+            return dateTime
+        }
 
-            var minString = hours[1].toInt()
-            var hoursString = hours[0].toInt()
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun localDateTimeToYears(date: LocalDateTime): String {
+            return date.format(DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy", locale))
+        }
 
-            hours[1] = (if (minString < 10) "0${minString}" else minString) as String
-            hours[0] = (if (hoursString < 10) "0${hoursString}" else hoursString) as String
+        fun convertToCompleteDate(date: String) {}
 
-            return ("${hours[0]}:${hours[1]}")
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun durationToHours(duration: Duration): String {
+            return String.format(
+                "%02d:%02d:%02d",
+                duration.toHours() % 24,
+                duration.toMinutes() % 60,
+                duration.seconds % 60
+            )
         }
     }
 

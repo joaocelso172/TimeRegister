@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -13,18 +14,21 @@ import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import com.example.strongeyetimeregister.DateConverter.Companion.convertToISO
-import com.example.strongeyetimeregister.DateConverter.Companion.convertToTime
 import com.example.strongeyetimeregister.dao.TimeControlDAO
 import com.example.strongeyetimeregister.model.TimeControl
 import com.example.strongeyetimeregister.model.dto.TimeControlDTO
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
 class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : Dialog(context) {
 
-    private val timeControlDTO = timeControlDTO
+    private var timeControlDTO = timeControlDTO
     private lateinit var editInitHour: EditText
     private lateinit var editEndHour:EditText
     private lateinit var txtInitClock:TextView
@@ -33,6 +37,7 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
     private lateinit var textInputEditTextDesc:TextInputEditText
     private val timeControlDAO: TimeControlDAO = TimeControlDAO()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -40,8 +45,6 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
         setContentView(R.layout.add_time_control_dialog)
         setInfoLayout()
         setButton()
-
-        calculateInterval()
     }
 
     private fun setButton() {
@@ -56,7 +59,7 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
         }
     }
 
-
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setInfoLayout() {
         editInitHour = findViewById(R.id.edit_init_hour)
         editEndHour = findViewById(R.id.edit_end_hour)
@@ -65,11 +68,11 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
         txtHourClock = findViewById(R.id.txt_hour_clock)
         textInputEditTextDesc = findViewById(R.id.edit_desc)
 
-        editInitHour!!.setText(convertToTime(timeControlDTO.initHour))
-        editEndHour!!.setText(timeControlDTO.endHour)
-        txtInitClock!!.setText("Início: ${timeControlDTO.initDate} às")
-        txtEndClock!!.setText("Fim: ${timeControlDTO.endDate} às")
-        textInputEditTextDesc!!.setText("")
+        editInitHour.setText(DateConverter.localDateTimeToHours(timeControlDTO.initialTime))
+        editEndHour!!.setText(DateConverter.localDateTimeToHours(timeControlDTO.endTime))
+        txtInitClock!!.text = "${DateConverter.localDateTimeToYears(timeControlDTO.initialTime)} às"
+        txtEndClock!!.text = "${DateConverter.localDateTimeToYears(timeControlDTO.endTime)} às"
+        txtHourClock.text = calculateInterval()
 
         editInitHour.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -95,51 +98,25 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
 
     }
 
-    private fun calculateInterval(){
-        var initDate = splitString(editInitHour.text.toString())
-        var endDate = splitString(editEndHour.text.toString())
-
-        var finalDate: Int = endDate - initDate
-
-        var finalMin: Int = if (finalDate % 60 == 0) 0 else (finalDate % 60)
-        var finalHour: Int = (finalDate / 60)
-
-        var finalMinString = if (finalMin < 10) "0${finalMin}" else finalMin
-        var finalHourString = if (finalHour < 10) "0${finalHour}" else finalHour
-
-        var stringHour = "$finalHourString:$finalMinString"
-
-        Log.d("AddTimeControlDialog", stringHour + finalDate + finalMin + finalHour + initDate + endDate)
-        txtHourClock.text = stringHour
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun calculateInterval() : String{
+        return DateConverter.durationToHours(Duration.between(timeControlDTO.initialTime, timeControlDTO.endTime))
     }
 
     private fun saveTimeControl(){
-
-        var timeControl = TimeControl("${timeControlDTO.initDate} - ${editInitHour.text}", "${timeControlDTO.endDate} - ${editEndHour.text}", textInputEditTextDesc?.text.toString())
-
-        timeControlDAO.addTimeControl(timeControl)
+        timeControlDAO.addTimeControl(timeControlDTO)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun popTimePicker(editText: EditText){
         val cal = Calendar.getInstance()
         val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
             cal.set(Calendar.HOUR_OF_DAY, hour)
             cal.set(Calendar.MINUTE, minute)
-            editText.setText(convertToTime(cal.time))
-            calculateInterval()
+            editText.setText("" + (cal.time))
+            txtHourClock.text = calculateInterval()
         }
         TimePickerDialog(context, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
-    }
-
-    fun splitString(string: String) : Int{
-        val separated = string.split(":").toTypedArray()
-        // this will contain "Fruit"
-
-        separated[1] // this will contain " they taste good"
-        var hoursToMin = (separated[0].toInt()*60)
-        var totalMin = hoursToMin + separated[1].toInt()
-        Log.d("AddTimeControlDialog", "$hoursToMin - $totalMin - $string - ${separated.size}")
-        return totalMin
     }
 
 }
