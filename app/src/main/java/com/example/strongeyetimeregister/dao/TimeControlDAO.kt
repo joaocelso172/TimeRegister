@@ -1,5 +1,6 @@
 package com.example.strongeyetimeregister.dao
 
+import android.util.Log
 import androidx.annotation.NonNull
 import com.example.strongeyetimeregister.model.TimeControl
 import com.example.strongeyetimeregister.model.dto.TimeControlDTO
@@ -30,8 +31,11 @@ class TimeControlDAO {
         } else return
     }
     //TODO create method that convert it to TimeControl model
-    fun addTimeControl(@NonNull timeControl: TimeControlDTO) {
+    fun addTimeControl(@NonNull timeControlDTO: TimeControlDTO) {
         val timeControlID: String? = dbUserRegisterRef.push().getKey()
+
+        val timeControl = TimeControl(timeControlDTO.initialTime.toString(),
+            timeControlDTO.endTime.toString(), timeControlDTO.desc)
 
         if (timeControlID != null) {
             timeControl.id = timeControlID
@@ -43,20 +47,20 @@ class TimeControlDAO {
 
     fun editTimeControl() {}
 
-    fun getAllTimeControl(tmList: ArrayList<TimeControl>, rcAdapter: TimeControlRecyclerAdapter) : ArrayList<TimeControl>{
-        timeControlList = ArrayList<TimeControl>()
+    fun getAllTimeControl(tmList: ArrayList<TimeControl>, rcAdapter: TimeControlRecyclerAdapter){
 
-        timeControlList.clear()
-
+        tmList.clear()
+        rcAdapter.notifyDataSetChanged()
+        
         dbUserRegisterRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 //Para cada informação disponivel, executa looping
-
-                //Para cada informação disponivel, executa looping
                 for (dados in snapshot.getChildren()) {
-                    var timeControl: TimeControl? = snapshot.getValue(TimeControl::class.java)
+                    var timeControl: TimeControl? = dados.getValue(TimeControl::class.java)
                     timeControl!!.id = dados.key.toString()
-                    timeControl.let { tmList.add(it) }
+                    tmList.add(timeControl)
+
+//                    Log.d(TAG, "Time control: $timeControl, from list: ${timeControlList}, from datasnapshot: $snapshot")
 
                 }
 
@@ -68,7 +72,6 @@ class TimeControlDAO {
             }
         })
 
-        return timeControlList
     }
 
 

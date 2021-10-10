@@ -5,7 +5,7 @@
     android:layout_width="380dp"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    android:background="@drawable/curve_shape"
+    android:background="@drawable/curve_shape_dialog"
     android:orientation="vertical">
 
 
@@ -113,7 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:background="@drawable/curve_shape"
+                    android:background="@drawable/curve_shape_dialog"
                     android:hint="Descreva as atividades"
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -134,7 +134,7 @@
             android:id="@+id/btn_yes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/curve_shape"
+            android:background="@drawable/curve_shape_dialog"
             android:clickable="true"
             android:enabled="true"
             android:text="Sim"
@@ -146,7 +146,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
-            android:background="@drawable/curve_shape"
+            android:background="@drawable/curve_shape_dialog"
             android:clickable="true"
             android:enabled="true"
             android:text="Não"

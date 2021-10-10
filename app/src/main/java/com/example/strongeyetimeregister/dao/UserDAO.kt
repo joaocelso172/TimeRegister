@@ -11,7 +11,7 @@ import com.google.firebase.database.*
 class UserDAO constructor(c: Context){
     private var mAuth: FirebaseAuth = FirebaseConfig.getFirebaseAuth()!!;
     private var dbUserRef: DatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
-    private var user: User = User("", "", false)
+    private var user: User = User("", "")
     private var success: Boolean = false
     private var dbUserChildRef: DatabaseReference? = null
 

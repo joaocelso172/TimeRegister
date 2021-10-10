@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -56,6 +57,23 @@ class DateConverter {
                 duration.toMinutes() % 60,
                 duration.seconds % 60
             )
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun stringToLocalDateTime(date: String) : LocalDateTime{
+            return LocalDateTime.parse(date)
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun completeDateToDisplayDate(date: LocalDateTime) : String{
+            return "${localDateTimeToYears(date)} às ${localDateTimeToHours(date)}"
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun dateToLocalDateTime (date: Date) : LocalDateTime{
+            return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
         }
     }
 

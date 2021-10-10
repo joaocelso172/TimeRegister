@@ -77,9 +77,8 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
         editInitHour.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        popTimePicker(editInitHour)
-                    }
+                    MotionEvent.ACTION_DOWN ->
+                        popTimePicker(editInitHour, true)
                 }
 
                 return v?.onTouchEvent(event) ?: true
@@ -89,7 +88,8 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
         editEndHour.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> popTimePicker(editEndHour)
+                    MotionEvent.ACTION_DOWN ->
+                        popTimePicker(editEndHour, false)
                 }
 
                 return v?.onTouchEvent(event) ?: true
@@ -104,16 +104,20 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
     }
 
     private fun saveTimeControl(){
+        timeControlDTO.desc = textInputEditTextDesc.text.toString()
         timeControlDAO.addTimeControl(timeControlDTO)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun popTimePicker(editText: EditText){
+    fun popTimePicker(editText: EditText, isInitDate: Boolean){
         val cal = Calendar.getInstance()
+        lateinit var date: LocalDateTime
         val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
             cal.set(Calendar.HOUR_OF_DAY, hour)
             cal.set(Calendar.MINUTE, minute)
-            editText.setText("" + (cal.time))
+            date = DateConverter.dateToLocalDateTime(cal.time)
+            if (isInitDate) timeControlDTO.initialTime = date else timeControlDTO.endTime = date
+            editText.setText(DateConverter.localDateTimeToHours(date))
             txtHourClock.text = calculateInterval()
         }
         TimePickerDialog(context, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
