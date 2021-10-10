@@ -55,7 +55,10 @@ class TimeControlActivity : AppCompatActivity(), View.OnClickListener{
             when(v!!.id!!){
                 R.id.switch_start_count -> {
                     if (swtStartCount.isChecked) clockListener.showDateInfo(txtInitialTime, txtActualTime, txtDurationTime)
-                    else clockListener.addTimeRegister()
+                    else {
+                        standardInfoLayout()
+                        clockListener.addTimeRegister()
+                    }
                 }
         }
     }
@@ -65,8 +68,12 @@ class TimeControlActivity : AppCompatActivity(), View.OnClickListener{
         timeControlList = ArrayList()
         timeControlRecyclerAdapter = TimeControlRecyclerAdapter(timeControlList);
         timeControlDAO.getAllTimeControl(timeControlList, timeControlRecyclerAdapter)
+    }
 
-
+    fun standardInfoLayout(){
+        txtActualTime.text = "00:00:00"
+        txtDurationTime.text = "00:00:00"
+        txtInitialTime.text = "00:00:00"
     }
 
 

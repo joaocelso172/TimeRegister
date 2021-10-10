@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.Period
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -29,27 +30,22 @@ class DateConverter {
             return toHoursFormat(convertToISO(date))
         }*/
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun localDateTimeToHours(date: LocalDateTime): String {
             return date.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
         }
 
-
-        @RequiresApi(Build.VERSION_CODES.O)
         fun localDateTimeToHours(date: String): LocalDateTime {
             var formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             var dateTime: LocalDateTime = LocalDateTime.parse(date, formatter);
             return dateTime
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun localDateTimeToYears(date: LocalDateTime): String {
             return date.format(DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy", locale))
         }
 
         fun convertToCompleteDate(date: String) {}
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun durationToHours(duration: Duration): String {
             return String.format(
                 "%02d:%02d:%02d",
@@ -59,17 +55,14 @@ class DateConverter {
             )
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun stringToLocalDateTime(date: String) : LocalDateTime{
             return LocalDateTime.parse(date)
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun completeDateToDisplayDate(date: LocalDateTime) : String{
             return "${localDateTimeToYears(date)} às ${localDateTimeToHours(date)}"
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun dateToLocalDateTime (date: Date) : LocalDateTime{
             return date.toInstant()
                 .atZone(ZoneId.systemDefault())

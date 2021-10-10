@@ -41,7 +41,6 @@ class TimeControlRecyclerAdapter (private val timeControlList: ArrayList<TimeCon
     }
 
     // Replace the contents of a view (invoked by the layout manager)
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element

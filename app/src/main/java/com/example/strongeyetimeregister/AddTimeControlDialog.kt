@@ -1,11 +1,11 @@
 package com.example.strongeyetimeregister
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -14,20 +14,16 @@ import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.annotation.RequiresApi
-import com.example.strongeyetimeregister.DateConverter.Companion.convertToISO
 import com.example.strongeyetimeregister.dao.TimeControlDAO
-import com.example.strongeyetimeregister.model.TimeControl
 import com.example.strongeyetimeregister.model.dto.TimeControlDTO
 import com.google.android.material.textfield.TextInputEditText
-import java.text.SimpleDateFormat
 import java.time.Duration
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.*
+
 
 class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : Dialog(context) {
 
+    private val TAG = "AddTimeControlDialog"
     private var timeControlDTO = timeControlDTO
     private lateinit var editInitHour: EditText
     private lateinit var editEndHour:EditText
@@ -37,7 +33,6 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
     private lateinit var textInputEditTextDesc:TextInputEditText
     private val timeControlDAO: TimeControlDAO = TimeControlDAO()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -59,7 +54,6 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setInfoLayout() {
         editInitHour = findViewById(R.id.edit_init_hour)
         editEndHour = findViewById(R.id.edit_end_hour)
@@ -78,7 +72,8 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN ->
-                        popTimePicker(editInitHour, true)
+                        //popTimePicker(editInitHour, true)
+                        showDateTimePicker(true)
                 }
 
                 return v?.onTouchEvent(event) ?: true
@@ -89,7 +84,7 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN ->
-                        popTimePicker(editEndHour, false)
+                        showDateTimePicker(false)
                 }
 
                 return v?.onTouchEvent(event) ?: true
@@ -98,7 +93,6 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun calculateInterval() : String{
         return DateConverter.durationToHours(Duration.between(timeControlDTO.initialTime, timeControlDTO.endTime))
     }
@@ -108,19 +102,59 @@ class AddTimeControlDialog(context: Context, timeControlDTO: TimeControlDTO) : D
         timeControlDAO.addTimeControl(timeControlDTO)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun popTimePicker(editText: EditText, isInitDate: Boolean){
         val cal = Calendar.getInstance()
-        lateinit var date: LocalDateTime
         val timeSetListener = TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
             cal.set(Calendar.HOUR_OF_DAY, hour)
             cal.set(Calendar.MINUTE, minute)
-            date = DateConverter.dateToLocalDateTime(cal.time)
+            var date = DateConverter.dateToLocalDateTime(cal.time)
             if (isInitDate) timeControlDTO.initialTime = date else timeControlDTO.endTime = date
             editText.setText(DateConverter.localDateTimeToHours(date))
             txtHourClock.text = calculateInterval()
         }
         TimePickerDialog(context, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
+    }
+
+    fun popDatePicker(editText: EditText, isInitDate: Boolean){
+        val cal = Calendar.getInstance()
+        val dateSetListener = DatePickerDialog.OnDateSetListener { datePicker, year, month, dayOfMonth ->
+            cal.set(Calendar.YEAR, year)
+            cal.set(Calendar.MONTH, month)
+            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            var date = DateConverter.dateToLocalDateTime(cal.time)
+            if (isInitDate) timeControlDTO.initialTime = date else timeControlDTO.endTime = date
+            editText.setText(DateConverter.localDateTimeToHours(date))
+            txtHourClock.text = calculateInterval()
+        }
+        DatePickerDialog(context, dateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
+    }
+
+    fun showDateTimePicker(isInitDate: Boolean) {
+        val date: Calendar
+        val currentDate = Calendar.getInstance()
+        date = Calendar.getInstance()
+        DatePickerDialog(context,
+            { view, year, monthOfYear, dayOfMonth ->
+                date.set(year, monthOfYear, dayOfMonth)
+                TimePickerDialog(context,
+                    { view, hourOfDay, minute ->
+                        date.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                        date.set(Calendar.MINUTE, minute)
+                        var newDate = DateConverter.dateToLocalDateTime(date.time)
+                        if (isInitDate) {
+                            timeControlDTO.initialTime = newDate
+                            txtInitClock.text = "${DateConverter.localDateTimeToYears(timeControlDTO.initialTime)} às"
+                            editInitHour.setText(DateConverter.localDateTimeToHours(newDate))
+                        } else {
+                            timeControlDTO.endTime = newDate
+                            txtEndClock.text = "${DateConverter.localDateTimeToYears(timeControlDTO.endTime)} às"
+                            editEndHour.setText(DateConverter.localDateTimeToHours(newDate))
+                        }
+                        txtHourClock.text = calculateInterval()
+                    }, currentDate[Calendar.HOUR_OF_DAY], currentDate[Calendar.MINUTE], true
+                ).show()
+            }, currentDate[Calendar.YEAR], currentDate[Calendar.MONTH], currentDate[Calendar.DATE]
+        ).show()
     }
 
 }

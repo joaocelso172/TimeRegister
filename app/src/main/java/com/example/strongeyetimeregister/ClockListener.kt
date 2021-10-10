@@ -18,7 +18,6 @@ class ClockListener(c: Context) {
     val timerHandler = Handler()
     lateinit var timerRunnable: Runnable
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun showDateInfo( txtInitialTime: TextView?, txtActualTime: TextView?,
                       txtDurationTime: TextView ) {
 
